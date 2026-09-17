@@ -43,6 +43,30 @@ void registerPatient() {
 int calculateWaitingTime(int specIndex) {
     return queueCounts[specIndex - 1] * AVGTIMES[specIndex - 1];
 }
+float calculateSurcharge(float baseFee, int urgency) {
+    if (urgency == 2) {
+        return baseFee * 0.20;
+    }
+    else if (urgency == 3) {
+        return baseFee * 0.50;
+    }
+    else {
+        return 0.0;
+    }
+}
+float calculateWardCost(int ward, int days) {
+    if (ward <= 0 || days <= 0) return 0.0;
+    else {
+    return days * WARDRATES[ward - 1];
+    }
+}
+float calculateDiscount(float grossTotal, int age) {
+    if (age < 5 || age > 65) {
+        int Discount= grossTotal * 0.15;
+        return Discount;
+    }
+    return 0.0;
+}
 
     int specIndex;
     printf("\nSelect Specialty (1-OPD, 2-Paediatrics, 3-Cardiology, 4-Neurology): ");
