@@ -33,19 +33,22 @@ int daysAdmitted[MAXPATIENTS];
 int assignedBed[MAXPATIENTS];
 
 int patientCount = 0;
-int waitingCounts[4] = {0, 0, 0, 0};
+int queueCounts[4] = {0, 0, 0, 0};
 
 void registerPatient() {
     if(patientCount >= MAXPATIENTS) {
         printf("System full!\n");
         return;
     }
+int calculateWaitingTime(int specIndex) {
+    return queueCounts[specIndex - 1] * AVGTIMES[specIndex - 1];
+}
 
     int specIndex;
     printf("\nSelect Specialty (1-OPD, 2-Paediatrics, 3-Cardiology, 4-Neurology): ");
     scanf("%d", &specIndex);
 
-    if(waitingCounts[specIndex - 1] >= DAILYCAPS[specIndex - 1]) {
+    if(queueCounts[specIndex - 1] >= DAILYCAPS[specIndex - 1]) {
         printf("Daily limit reached for this specialty!\n");
         return;
     }
@@ -95,7 +98,7 @@ void registerPatient() {
         assignedBed[patientCount] = 0;
     }
 
-    waitingCounts[specIndex - 1]++;
+    queueCounts[specIndex - 1]++;
     patientCount++;
     printf("\n[Reg-%d]\n Registered successfully!\n", patientID[patientCount - 1]);
 
