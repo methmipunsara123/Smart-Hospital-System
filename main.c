@@ -66,9 +66,38 @@ void registerPatient() {
     printf("Enter Urgency Level (1-Normal, 2-Urgent, 3-Critical): ");
     scanf("%d", &urgencyLevel[patientCount]);
 
+
+    printf("Is Admitted to Ward? (1-Yes, 0-No): ");
+    scanf("%d", &isAdmitted[patientCount]);
+
+    if(isAdmitted[patientCount] == 1) {
+        printf("Select Ward ID (1-General, 2-Paediatric, 3-Surgical, 4-ICU): ");
+        scanf("%d", &wardID[patientCount]);
+
+        printf("Enter Days Admitted: ");
+        scanf("%d", &daysAdmitted[patientCount]);
+
+    int w = wardID[patientCount] - 1;
+    int bedFound = 0;
+    for(int b = 0; b < WARDCAPACITY[w]; b++) {
+        if(bedOccupancy[w][b] == 0) {
+            bedOccupancy[w][b] = 1;
+            bedFound = b + 1;
+            break;
+        }
+    }
+
+    assignedBed[patientCount] = bedFound;
+    }
+    else {
+        wardID[patientCount] = 0;
+        daysAdmitted[patientCount] = 0;
+        assignedBed[patientCount] = 0;
+    }
+
     waitingCounts[specIndex - 1]++;
     patientCount++;
-    printf("\n[Reg-%d] Registered successfully!\n", patientID[patientCount - 1]);
+    printf("\n[Reg-%d]\n Registered successfully!\n", patientID[patientCount - 1]);
 
 }
 
