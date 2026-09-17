@@ -22,6 +22,18 @@ void setupBeds() {
         }
     }
 }
+int patientID[MAXPATIENTS];
+char patientName[MAXPATIENTS][50];
+int patientAge[MAXPATIENTS];
+int urgencyLevel[MAXPATIENTS];
+int specialtyID[MAXPATIENTS];
+int isAdmitted[MAXPATIENTS];
+int wardID[MAXPATIENTS];
+int daysAdmitted[MAXPATIENTS];
+int assignedBed[MAXPATIENTS];
+
+int patientCount = 0;
+int waitingCounts[4] = {0, 0, 0, 0};
 
 int main() {
     setupBeds();
