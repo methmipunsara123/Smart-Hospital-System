@@ -106,6 +106,26 @@ void printPatientBill(int index) {
     printf("======================================================\n");
 }
 
+void sortByPriority() {
+    int i, j;
+    for (i = 0; i < patientCount - 1; i++) {
+        for (j = 0; j < patientCount - i - 1; j++) {
+            if (urgencyLevel[j] < urgencyLevel[j+1]) {
+                int tempU = urgencyLevel[j]; urgencyLevel[j] = urgencyLevel[j+1]; urgencyLevel[j+1] = tempU;
+                int tempID = patientID[j]; patientID[j] = patientID[j+1]; patientID[j+1] = tempID;
+                char tempN[50]; strcpy(tempN, patientName[j]); strcpy(patientName[j], patientName[j+1]); strcpy(patientName[j+1], tempN);
+                int tempA = patientAge[j]; patientAge[j] = patientAge[j+1]; patientAge[j+1] = tempA;
+                int tempS = specialtyID[j]; specialtyID[j] = specialtyID[j+1]; specialtyID[j+1] = tempS;
+                int tempAdm = isAdmitted[j]; isAdmitted[j] = isAdmitted[j+1]; isAdmitted[j+1] = tempAdm;
+                int tempW = wardID[j]; wardID[j] = wardID[j+1]; wardID[j+1] = tempW;
+                int tempD = daysAdmitted[j]; daysAdmitted[j] = daysAdmitted[j+1]; daysAdmitted[j+1] = tempD;
+                int tempB = assignedBed[j]; assignedBed[j] = assignedBed[j+1]; assignedBed[j+1] = tempB;
+            }
+        }
+    }
+    printf("\nSorted by Urgency Level successfully.\n");
+}
+
     int specIndex;
     printf("\nSelect Specialty (1-OPD, 2-Paediatrics, 3-Cardiology, 4-Neurology): ");
     scanf("%d", &specIndex);
