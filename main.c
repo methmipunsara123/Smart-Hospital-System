@@ -126,6 +126,41 @@ void sortByPriority() {
     printf("\nSorted by Urgency Level successfully.\n");
 }
 
+void generateAnalytics() {
+    printf("\n--- REPORTS & ANALYTICS ---\n");
+    printf("Total Patients Registered: %d\n", patientCount);
+
+    int level3 = 0, level2 = 0, level1 = 0;
+    float totalRevenue = 0, totalDiscounts = 0;
+    float maxBill = -1;
+    char highestPayer[50] = "None";
+
+    for(int i = 0; i < patientCount; i++) {
+        if(urgencyLevel[i] == 3) level3++;
+        else if(urgencyLevel[i] == 2) level2++;
+        else level1++;
+
+        float baseFee = BASEFEES[specialtyID[i]-1];
+        float surcharge = calculateSurcharge(baseFee, urgencyLevel[i]);
+        float wardCost = calculateWardCost(wardID[i], daysAdmitted[i]);
+        float gross = baseFee + surcharge + wardCost;
+        float disc = calculateDiscount(gross, patientAge[i]);
+        float finalPay = gross - disc;
+
+        totalRevenue += finalPay;
+        totalDiscounts += disc;
+
+        if(finalPay > maxBill) {
+            maxBill = finalPay;
+            strcpy(highestPayer, patientName[i]);
+        }
+    }
+
+    printf("Urgency Breakdown: Level 3: %d | Level 2: %d | Level 1: %d\n", level3, level2, level1);
+    printf("Total Revenue Earned: LKR %.2f\n", totalRevenue);
+    printf("Total Discounts Granted: LKR %.2f\n", totalDiscounts);
+    printf("Highest Paying Patient: %s (LKR %.2f)\n", highestPayer, maxBill > 0 ? maxBill : 0.0);
+}
     int specIndex;
     printf("\nSelect Specialty (1-OPD, 2-Paediatrics, 3-Cardiology, 4-Neurology): ");
     scanf("%d", &specIndex);
