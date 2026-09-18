@@ -68,6 +68,44 @@ float calculateDiscount(float grossTotal, int age) {
     return 0.0;
 }
 
+void printPatientBill(int index) {
+    int spec = specialtyID[index] - 1;
+    float baseFee = BASEFEES[spec];
+    float surcharge = calculateSurcharge(baseFee, urgencyLevel[index]);
+    float wardCost = calculateWardCost(wardID[index], daysAdmitted[index]);
+    float grossTotal = baseFee + surcharge + wardCost;
+    float discount = calculateDiscount(grossTotal, patientAge[index]);
+    float finalPayable = grossTotal - discount;
+    int waitTime = calculateWaitingTime(specialtyID[index]);
+
+    printf("\n======================================================\n");
+    printf("        SMART HOSPITAL ADMISSION & BILL\n");
+    printf("======================================================\n");
+    printf("Patient ID          : PAT-%d\n", patientID[index]);
+    printf("Patient Name        : %s\n", patientName[index]);
+    printf("Age                 : %d Years %s\n", patientAge[index], (patientAge[index]<5 || patientAge[index]>65) ? "(15% Subsidy)" : "");
+    printf("Specialty           : %s\n", SPECIALTYNAMES[spec]);
+
+    if(isAdmitted[index]) {
+        printf("Assigned Ward       : %s (Bed %02d)\n", WARDNAMES[wardID[index]-1], assignedBed[index]);
+    } else {
+        printf("Assigned Ward       : OPD (Not Admitted)\n");
+    }
+
+    printf("Urgency Level       : Level %d\n", urgencyLevel[index]);
+    printf("------------------------------------------------------\n");
+    printf("Base Fee            : LKR %.2f\n", baseFee);
+    printf("Emergency Surcharge : LKR %.2f\n", surcharge);
+    printf("Ward Cost           : LKR %.2f\n", wardCost);
+    printf("------------------------------------------------------\n");
+    printf("Gross Total         : LKR %.2f\n", grossTotal);
+    printf("Age Subsidy         : LKR -%.2f\n", discount);
+    printf("------------------------------------------------------\n");
+    printf("Final Payable       : LKR %.2f\n", finalPayable);
+    printf("Estimated Wait Time : %d mins\n", waitTime);
+    printf("======================================================\n");
+}
+
     int specIndex;
     printf("\nSelect Specialty (1-OPD, 2-Paediatrics, 3-Cardiology, 4-Neurology): ");
     scanf("%d", &specIndex);
@@ -134,4 +172,3 @@ int main() {
     registerPatient();
     return 0;
 }
-
