@@ -184,6 +184,23 @@ void loadBedStatus() {
     }
     fclose(fp);
 }
+
+void logPatientToFile(int i) {
+    FILE *fp = fopen("patientrecords.txt", "a");
+    if(!fp) return;
+
+    float baseFee = BASEFEES[specialtyID[i]-1];
+    float surcharge = calculateSurcharge(baseFee, urgencyLevel[i]);
+    float wardCost = calculateWardCost(wardID[i], daysAdmitted[i]);
+    float gross = baseFee + surcharge + wardCost;
+    float disc = calculateDiscount(gross, patientAge[i]);
+    float finalPay = gross - disc;
+
+    fprintf(fp, "PAT-%d \n %s \n Age: %d \n Urgency: %d \n Bill: LKR %.2f\n",
+            patientID[i], patientName[i], patientAge[i], urgencyLevel[i], finalPay);
+
+    fclose(fp);
+}
     int specIndex;
     printf("\nSelect Specialty (1-OPD, 2-Paediatrics, 3-Cardiology, 4-Neurology): ");
     scanf("%d", &specIndex);
