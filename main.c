@@ -3,6 +3,14 @@
 
 #define MAXPATIENTS 100
 
+
+void loadBedStatus();
+void logPatientToFile(int i);
+void saveBedStatus();
+void printPatientBill(int index);
+void sortByPriority();
+void generateAnalytics();
+
 const char SPECIALTYNAMES[4][30] = {"General Practice", "Paediatrics", "Cardiology", "Neurology"};
 const float BASEFEES[4] = {1500.0, 2500.0, 4500.0, 5000.0};
 const int AVGTIMES[4] = {15, 20, 30, 30};
@@ -22,6 +30,7 @@ void setupBeds() {
         }
     }
 }
+
 int patientID[MAXPATIENTS];
 char patientName[MAXPATIENTS][50];
 int patientAge[MAXPATIENTS];
@@ -35,14 +44,11 @@ int assignedBed[MAXPATIENTS];
 int patientCount = 0;
 int queueCounts[4] = {0, 0, 0, 0};
 
-void registerPatient() {
-    if(patientCount >= MAXPATIENTS) {
-        printf("System full!\n");
-        return;
-    }
+// Helper Calculation Functions
 int calculateWaitingTime(int specIndex) {
     return queueCounts[specIndex - 1] * AVGTIMES[specIndex - 1];
 }
+
 float calculateSurcharge(float baseFee, int urgency) {
     if (urgency == 2) {
         return baseFee * 0.20;
@@ -54,19 +60,22 @@ float calculateSurcharge(float baseFee, int urgency) {
         return 0.0;
     }
 }
+
 float calculateWardCost(int ward, int days) {
     if (ward <= 0 || days <= 0) return 0.0;
     else {
-    return days * WARDRATES[ward - 1];
+        return days * WARDRATES[ward - 1];
     }
 }
+
 float calculateDiscount(float grossTotal, int age) {
     if (age < 5 || age > 65) {
-        int Discount= grossTotal * 0.15;
+        float Discount = grossTotal * 0.15;
         return Discount;
     }
     return 0.0;
 }
+
 
 void printPatientBill(int index) {
     int spec = specialtyID[index] - 1;
@@ -127,7 +136,9 @@ void sortByPriority() {
 }
 
 void generateAnalytics() {
+    printf("----------------------------------------------");
     printf("\n--- REPORTS & ANALYTICS ---\n");
+    printf("----------------------------------------------\n");
     printf("Total Patients Registered: %d\n", patientCount);
 
     int level3 = 0, level2 = 0, level1 = 0;
@@ -201,6 +212,13 @@ void logPatientToFile(int i) {
 
     fclose(fp);
 }
+
+void registerPatient() {
+    if(patientCount >= MAXPATIENTS) {
+        printf("System full!\n");
+        return;
+    }
+
     int specIndex;
     printf("\nSelect Specialty (1-OPD, 2-Paediatrics, 3-Cardiology, 4-Neurology): ");
     scanf("%d", &specIndex);
@@ -213,19 +231,16 @@ void logPatientToFile(int i) {
     patientID[patientCount] = 1001 + patientCount;
     specialtyID[patientCount] = specIndex;
 
-
     printf("Enter Patient Name: ");
     getchar();
     fgets(patientName[patientCount], sizeof(patientName[patientCount]), stdin);
     patientName[patientCount][strcspn(patientName[patientCount], "\n")] = 0;
-
 
     printf("Enter Age: ");
     scanf("%d", &patientAge[patientCount]);
 
     printf("Enter Urgency Level (1-Normal, 2-Urgent, 3-Critical): ");
     scanf("%d", &urgencyLevel[patientCount]);
-
 
     printf("Is Admitted to Ward? (1-Yes, 0-No): ");
     scanf("%d", &isAdmitted[patientCount]);
@@ -237,17 +252,16 @@ void logPatientToFile(int i) {
         printf("Enter Days Admitted: ");
         scanf("%d", &daysAdmitted[patientCount]);
 
-    int w = wardID[patientCount] - 1;
-    int bedFound = 0;
-    for(int b = 0; b < WARDCAPACITY[w]; b++) {
-        if(bedOccupancy[w][b] == 0) {
-            bedOccupancy[w][b] = 1;
-            bedFound = b + 1;
-            break;
+        int w = wardID[patientCount] - 1;
+        int bedFound = 0;
+        for(int b = 0; b < WARDCAPACITY[w]; b++) {
+            if(bedOccupancy[w][b] == 0) {
+                bedOccupancy[w][b] = 1;
+                bedFound = b + 1;
+                break;
+            }
         }
-    }
-
-    assignedBed[patientCount] = bedFound;
+        assignedBed[patientCount] = bedFound;
     }
     else {
         wardID[patientCount] = 0;
@@ -258,12 +272,48 @@ void logPatientToFile(int i) {
     queueCounts[specIndex - 1]++;
     patientCount++;
     printf("\n[Reg-%d]\n Registered successfully!\n", patientID[patientCount - 1]);
+}
 
+void displayMenu() {
+    printf("\n=== SMART HOSPITAL MANAGEMENT SYSTEM ===\n");
+    printf("1. Register Patient\n");
+    printf("2. Display Bills\n");
+    printf("3. Sort Patients by Priority\n");
+    printf("4. View Analytics\n");
+    printf("5. Exit\n");
+    printf("Enter choice: ");
 }
 
 int main() {
     setupBeds();
-    printf("Smart Hospital Management System ...\n");
-    registerPatient();
+    loadBedStatus();
+    int choice;
+
+    while(1) {
+        displayMenu();
+        if(scanf("%d", &choice) != 1) break;
+
+        if(choice == 1) {
+            registerPatient();
+            if(patientCount > 0) {
+                logPatientToFile(patientCount - 1);
+                saveBedStatus();
+            }
+        } else if(choice == 2) {
+            for(int i = 0; i < patientCount; i++) {
+                printPatientBill(i);
+            }
+        } else if(choice == 3) {
+            sortByPriority();
+        } else if(choice == 4) {
+            generateAnalytics();
+        } else if(choice == 5) {
+            saveBedStatus();
+            printf("Exiting system...\n");
+            break;
+        } else {
+            printf("Invalid Option.\n");
+        }
+    }
     return 0;
 }
