@@ -161,6 +161,29 @@ void generateAnalytics() {
     printf("Total Discounts Granted: LKR %.2f\n", totalDiscounts);
     printf("Highest Paying Patient: %s (LKR %.2f)\n", highestPayer, maxBill > 0 ? maxBill : 0.0);
 }
+
+void saveBedStatus() {
+    FILE *fp = fopen("beds_status.txt", "w");
+    if(!fp) return;
+    for(int i=0; i<4; i++) {
+        for(int j=0; j<20; j++) {
+            fprintf(fp, "%d ", bedOccupancy[i][j]);
+        }
+        fprintf(fp, "\n");
+    }
+    fclose(fp);
+}
+
+void loadBedStatus() {
+    FILE *fp = fopen("beds_status.txt", "r");
+    if(!fp) return;
+    for(int i=0; i<4; i++) {
+        for(int j=0; j<20; j++) {
+            fscanf(fp, "%d", &bedOccupancy[i][j]);
+        }
+    }
+    fclose(fp);
+}
     int specIndex;
     printf("\nSelect Specialty (1-OPD, 2-Paediatrics, 3-Cardiology, 4-Neurology): ");
     scanf("%d", &specIndex);
