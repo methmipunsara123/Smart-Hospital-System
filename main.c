@@ -1,3 +1,9 @@
+/*
+ * Smart Hospital Patient & Resource Allocation System
+ * CSC 1012 Individual Assignment
+ */
+
+
 #include <stdio.h>
 #include <string.h>
 
@@ -44,7 +50,7 @@ int assignedBed[MAXPATIENTS];
 int patientCount = 0;
 int queueCounts[4] = {0, 0, 0, 0};
 
-// Helper Calculation Functions
+
 int calculateWaitingTime(int specIndex) {
     return queueCounts[specIndex - 1] * AVGTIMES[specIndex - 1];
 }
